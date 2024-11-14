@@ -122,10 +122,36 @@ public class LoanForm extends JFrame implements ActionListener {
             ps.setDouble(4, Double.parseDouble(interestRate));
             ps.setString(5, loanType);
             ps.executeUpdate();
+
+            // Log the transaction after loan application is submitted
+            logLoanTransaction(pin, loanAmount, loanType);
+
             JOptionPane.showMessageDialog(null, "Loan application submitted successfully!");
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error submitting loan application: " + ex.getMessage());
+        } finally {
+            try {
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void logLoanTransaction(String pin, String loanAmount, String loanType) {
+        PreparedStatement ps = null;
+
+        try {
+            String sql = "INSERT INTO transaction_log (card_number, transaction_type, amount) " +
+                    "SELECT card_number, 'Loan Application', ? FROM login WHERE pin = ?";
+            ps = dbConnection.connection.prepareStatement(sql);
+            ps.setDouble(1, Double.parseDouble(loanAmount));
+            ps.setString(2, pin);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error logging transaction: " + ex.getMessage());
         } finally {
             try {
                 if (ps != null) ps.close();

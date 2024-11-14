@@ -121,15 +121,21 @@ public class Signup2 extends JFrame implements ActionListener {
         add(l10);
 
         r1 = new JRadioButton("Yes");
-        r1.setFont(new Font("Raleway", Font.BOLD,14));
+        r1.setFont(new Font("Raleway", Font.BOLD, 14));
         r1.setBackground(new Color(181, 246, 246));
-        r1.setBounds(350,490,100,30);
+        r1.setBounds(350, 490, 100, 30);
         add(r1);
+
         r2 = new JRadioButton("No");
-        r2.setFont(new Font("Raleway", Font.BOLD,14));
+        r2.setFont(new Font("Raleway", Font.BOLD, 14));
         r2.setBackground(new Color(181, 246, 246));
-        r2.setBounds(460,490,100,30);
+        r2.setBounds(460, 490, 100, 30);
         add(r2);
+
+// Group the "Senior Citizen" radio buttons
+        ButtonGroup seniorCitizenGroup = new ButtonGroup();
+        seniorCitizenGroup.add(r1);
+        seniorCitizenGroup.add(r2);
 
         JLabel l11 = new JLabel("Existing Account : ");
         l11.setFont(new Font("Raleway", Font.BOLD,18));
@@ -137,15 +143,21 @@ public class Signup2 extends JFrame implements ActionListener {
         add(l11);
 
         e1 = new JRadioButton("Yes");
-        e1.setFont(new Font("Raleway", Font.BOLD,14));
+        e1.setFont(new Font("Raleway", Font.BOLD, 14));
         e1.setBackground(new Color(181, 246, 246));
-        e1.setBounds(350,540,100,30);
+        e1.setBounds(350, 540, 100, 30);
         add(e1);
+
         e2 = new JRadioButton("No");
-        e2.setFont(new Font("Raleway", Font.BOLD,14));
+        e2.setFont(new Font("Raleway", Font.BOLD, 14));
         e2.setBackground(new Color(181, 246, 246));
-        e2.setBounds(460,540,100,30);
+        e2.setBounds(460, 540, 100, 30);
         add(e2);
+
+// Group the "Existing Account" radio buttons
+        ButtonGroup existingAccountGroup = new ButtonGroup();
+        existingAccountGroup.add(e1);
+        existingAccountGroup.add(e2);
 
         JLabel l12 = new JLabel("Form No : ");
         l12.setFont(new Font("Raleway", Font.BOLD,14));
@@ -182,38 +194,43 @@ public class Signup2 extends JFrame implements ActionListener {
         String occ = (String) comboBox5.getSelectedItem();
 
         String pan = textPan.getText();
-        String addhar = textAadhar.getText();
+        String aadhar = textAadhar.getText();
 
         String scitizen = null;
-        if ((r1.isSelected())){
+        if (r1.isSelected()) {
             scitizen = "Yes";
         } else if (r2.isSelected()) {
-            scitizen ="No";
-        }
-        String eAccount = " ";
-        if ((r1.isSelected())){
-            eAccount = "Yes";
-        } else if (r2.isSelected()) {
-            eAccount ="No";
+            scitizen = "No";
         }
 
-        try{
-            if (textPan.getText().equals("") || textAadhar.getText().equals("")){
-                JOptionPane.showMessageDialog(null,"Fill all the fields");
-            }else {
+        String eAccount = null;
+        if (e1.isSelected()) {
+            eAccount = "Yes";
+        } else if (e2.isSelected()) {
+            eAccount = "No";
+        }
+
+        // PAN and Aadhaar validation
+        String panPattern = "[A-Z]{5}[0-9]{4}[A-Z]";
+        String aadharPattern = "\\d{12}";
+
+        try {
+            if (pan.isEmpty() || aadhar.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Fill all the fields");
+            } else if (!pan.matches(panPattern)) {
+                JOptionPane.showMessageDialog(null, "Enter a valid PAN number (e.g., ABCDE1234F)");
+            } else if (!aadhar.matches(aadharPattern)) {
+                JOptionPane.showMessageDialog(null, "Enter a valid 12-digit Aadhaar number");
+            } else {
                 Connn c = new Connn();
-                String q = "insert into Signuptwo values('"+formno+"', '"+rel+"', '"+cate+"','"+inc+"','"+edu+"','"+occ+"','"+pan+"','"+addhar+"','"+scitizen+"','"+eAccount+"')";
+                String q = "INSERT INTO Signuptwo VALUES('" + formno + "', '" + rel + "', '" + cate + "', '" + inc + "', '" + edu + "', '" + occ + "', '" + pan + "', '" + aadhar + "', '" + scitizen + "', '" + eAccount + "')";
                 c.statement.executeUpdate(q);
                 new Signup3(formno);
                 setVisible(false);
             }
-
-
-        }catch (Exception E){
-            E.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-
     }
 
     public static void main(String[] args) {

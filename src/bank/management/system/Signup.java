@@ -196,14 +196,22 @@ public class Signup extends JFrame implements ActionListener {
         String fname = textFname.getText();
         String dob = ((JTextField) dateChooser.getDateEditor().getUiComponent()).getText();
         String gender = null;
-        if(r1.isSelected()){
+        if (r1.isSelected()) {
             gender = "Male";
-        }else if (r2.isSelected()){
+        } else if (r2.isSelected()) {
             gender = "Female";
         }
         String email = textEmail.getText();
-        String marital =null;
-        if (m1.isSelected()){
+
+        // Email validation using regular expression
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        if (!email.matches(emailRegex)) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid email address.");
+            return;
+        }
+
+        String marital = null;
+        if (m1.isSelected()) {
             marital = "Married";
         } else if (m2.isSelected()) {
             marital = "Unmarried";
@@ -214,23 +222,29 @@ public class Signup extends JFrame implements ActionListener {
         String address = textAdd.getText();
         String city = textcity.getText();
         String pincode = textPin.getText();
+
+        // Pincode validation (6 digits)
+        String pincodeRegex = "^[0-9]{6}$";  // Only 6 digits
+        if (!pincode.matches(pincodeRegex)) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid 6-digit pincode.");
+            return;
+        }
+
         String state = textState.getText();
 
-        try{
-            if (textName.getText().equals("")){
+        try {
+            if (textName.getText().equals("")) {
                 JOptionPane.showMessageDialog(null, "Fill all the fields");
-            }else {
+            } else {
                 Connn c = new Connn();
                 String q = "insert into signup values('"+formno+"', '"+name+"','"+fname+"','"+dob+"','"+gender+"','"+email+"','"+marital+"', '"+address+"', '"+city+"','"+pincode+"','"+state+"' )";
                 c.statement.executeUpdate(q);
                 new Signup2(formno);
                 setVisible(false);
             }
-
-        }catch (Exception E){
+        } catch (Exception E) {
             E.printStackTrace();
         }
-
     }
 
     public static void main(String[] args) {

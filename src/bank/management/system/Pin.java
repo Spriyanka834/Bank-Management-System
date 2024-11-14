@@ -34,7 +34,7 @@ public class Pin extends JFrame implements ActionListener {
 
         p1 = new JPasswordField();
         p1.setBackground(new Color(180, 181, 182));
-        p1.setForeground(Color.WHITE);
+        p1.setForeground(Color.BLACK);
         p1.setBounds(600,220,180,25);
         p1.setFont(new Font("Raleway", Font.BOLD,22));
         l3.add(p1);
@@ -47,12 +47,10 @@ public class Pin extends JFrame implements ActionListener {
 
         p2 = new JPasswordField();
         p2.setBackground(new Color(180, 181, 182));
-        p2.setForeground(Color.WHITE);
+        p2.setForeground(Color.BLACK);
         p2.setBounds(600,255,180,25);
         p2.setFont(new Font("Raleway", Font.BOLD,22));
         l3.add(p2);
-
-
 
         b1 = new JButton("CHANGE");
         b1.setBounds(735,362,100,30);
@@ -78,51 +76,58 @@ public class Pin extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        try{
-
+        try {
             String pin1 = p1.getText();
             String pin2 = p2.getText();
 
-            if (!pin1.equals(pin2)){
-                JOptionPane.showMessageDialog(null,"Entered PIN does not match");
+            if (e.getSource() == b2) {  // Back Button Logic
+                new main_Class(pin);  // Return to main_Class page
+                setVisible(false);
+                return;  // Exit method to bypass PIN validation
+            }
+
+            // Validate if the entered PINs match
+            if (!pin1.equals(pin2)) {
+                JOptionPane.showMessageDialog(null, "Entered PIN does not match");
                 return;
             }
-            if (e.getSource()==b1){
-                if (p1.getText().equals("")){
-                    JOptionPane.showMessageDialog(null,"Enter New PIN");
-                    return;
-                }
-                if (p2.getText().equals("")){
-                    JOptionPane.showMessageDialog(null,"Re-Enter New PIN");
-                    return;
-                }
 
+            // Validate if the PIN is 4 digits long
+            if (pin1.length() != 4) {
+                JOptionPane.showMessageDialog(null, "PIN must be exactly 4 digits");
+                return;
+            }
+
+            // Check if the PIN fields are empty
+            if (pin1.equals("")) {
+                JOptionPane.showMessageDialog(null, "Enter New PIN");
+                return;
+            }
+            if (pin2.equals("")) {
+                JOptionPane.showMessageDialog(null, "Re-Enter New PIN");
+                return;
+            }
+
+            // Proceed to update the PIN in the database
+            if (e.getSource() == b1) {  // Change Button Logic
                 Connn c = new Connn();
-                String q1 = "update bank set pin = '"+pin1+"' where pin = '"+pin+"'";
-                String q2 = "update login set pin = '"+pin1+"' where pin = '"+pin+"'";
-                String q3 = "update signupthree set pin = '"+pin1+"' where pin = '"+pin+"'";
+
+                String q1 = "UPDATE bank SET pin = '" + pin1 + "' WHERE pin = '" + pin + "'";
+                String q2 = "UPDATE login SET pin = '" + pin1 + "' WHERE pin = '" + pin + "'";
+                String q3 = "UPDATE signupthree SET pin = '" + pin1 + "' WHERE pin = '" + pin + "'";
 
                 c.statement.executeUpdate(q1);
                 c.statement.executeUpdate(q2);
                 c.statement.executeUpdate(q3);
 
-                JOptionPane.showMessageDialog(null,"PIN changed successfully");
+                JOptionPane.showMessageDialog(null, "PIN changed successfully");
                 setVisible(false);
-                new main_Class(pin);
-
-            } else if (e.getSource()==b2) {
-                new main_Class(pin);
-                setVisible(false);
+                new main_Class(pin1);  // Pass updated PIN to main_Class
             }
 
-
-        }catch (Exception E){
-            E.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-
-
     }
 
     public static void main(String[] args) {

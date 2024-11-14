@@ -22,7 +22,7 @@ public class Withdrawl extends JFrame implements ActionListener {
         l3.setBounds(0,0,1550,830);
         add(l3);
 
-        JLabel label1 = new JLabel("MAXIMUM WITHDRAWAL IS RS.10,000");
+        JLabel label1 = new JLabel("MAXIMUM WITHDRAWAL IS RS.1,00,000");
         label1.setForeground(Color.WHITE);
         label1.setFont(new Font("System", Font.BOLD, 16));
         label1.setBounds(460,180,700,35);
@@ -37,7 +37,7 @@ public class Withdrawl extends JFrame implements ActionListener {
 
         textField = new TextField();
         textField.setBackground(new Color(180, 181, 182));
-        textField.setForeground(Color.WHITE);
+        textField.setForeground(Color.BLACK);
         textField.setBounds(460,260,320,25);
         textField.setFont(new Font("Raleway", Font.BOLD,22));
         l3.add(textField);
@@ -64,12 +64,14 @@ public class Withdrawl extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==b1) {
+        if(e.getSource() == b1) {
             try {
                 String amount = textField.getText();
                 Date date = new Date();
-                if (textField.getText().equals("")) {
-                    JOptionPane.showMessageDialog(null, "Please enter the Amount you want to withdraw");
+                if (amount.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Please enter the amount you want to withdraw");
+                } else if (Integer.parseInt(amount) > 100000) {
+                    JOptionPane.showMessageDialog(null, "Maximum withdrawal limit is Rs. 1,00,000");
                 } else {
                     Connn c = new Connn();
                     ResultSet resultSet = c.statement.executeQuery("select * from bank where pin = '" + pin + "'");
@@ -82,20 +84,19 @@ public class Withdrawl extends JFrame implements ActionListener {
                         }
                     }
                     if (balance < Integer.parseInt(amount)) {
-                        JOptionPane.showMessageDialog(null, "Insuffient Balance");
+                        JOptionPane.showMessageDialog(null, "Insufficient Balance");
                         return;
                     }
 
-                    c.statement.executeUpdate("insert into bank values('" + pin + "', '" + date + "', 'Withdrawl', '" + amount + "' )");
+                    c.statement.executeUpdate("insert into bank values('" + pin + "', '" + date + "', 'Withdrawal', '" + amount + "' )");
                     JOptionPane.showMessageDialog(null, "Rs. " + amount + " Debited Successfully");
                     setVisible(false);
                     new main_Class(pin);
-
                 }
-            } catch (Exception E) {
-
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } else if (e.getSource()==b2) {
+        } else if (e.getSource() == b2) {
             setVisible(false);
             new main_Class(pin);
         }
